@@ -1,3 +1,23 @@
+# Show game instructions
+def show_instructions():
+    print("\n Welcome to Scrabble!")
+    print("Instructions:")
+    print("Enter a word to place on the board.")
+    print("Choose a starting row (0-14) and column (0-14).")
+    print("Choose a direction: 'across' (→) or 'down' (↓).")
+    print("Words must fit on the board.")
+    print("Your score is calculated based on letter values.")
+    print("Type 'quit' to exit the game.")
+    print("Example Input:")
+    print("Word: PYTHON")
+    print("Row: 7")
+    print("Column: 3")
+    print("Direction: across")
+    print("Have fun playing!\n")
+
+# Call instructions before the game starts
+show_instructions()
+
 # Scrabble letter values
 letter_values = {
     'A': 1, 'B': 3, 'C': 3, 'D': 2, 'E': 1, 'F': 4, 'G': 2, 'H': 4, 'I': 1,
@@ -10,37 +30,37 @@ scrabble_board = [[' ' for _ in range(15)] for _ in range(15)]
 
 # Function to display the board
 def display_board(board):
-    print("   " + " ".join(str(i).rjust(2) for i in range(15)))  # Column numbers
-    print("  " + "-" * 45)  # Top border
+    print("    " + "  ".join(f"{i:2}" for i in range(15)))  # Column numbers
+    print("   +" + "---" * 15 + "+")  # Top border
+    
     for i, row in enumerate(board):
-        print(str(i).rjust(2) + "| " + " ".join(row))  # Row numbers and board
+        print(f"{i:2} | " + " | ".join(row) + " |")  # Row numbers + aligned board
+    
+    print("   +" + "---" * 15 + "+")  # Bottom border
     print()
 
 # Function to calculate the score of a word
 def calculate_score(word):
-    score = 0
-    for letter in word:
-        score += letter_values.get(letter.upper(), 0)  # Correct lookup
-    return score
+    return sum(letter_values.get(letter.upper(), 0) for letter in word)
 
 # Function to place a word on the board
 def place_word(board, word, row, col, direction):
+    print(f"DEBUG: Placing '{word}' at row={row}, col={col}, direction={direction}")
+    
     if direction == 'across':
-        for letter in word:
-            if board[row][col] == ' ' or board[row][col] == letter:
-                board[row][col] = letter
-            else:
-                print("Invalid placement: Overlapping letter mismatch.")
-                return False
-            col += 1
+        if all(board[row][col + i] in [' ', word[i]] for i in range(len(word))):
+            for i, letter in enumerate(word):
+                board[row][col + i] = letter
+        else:
+            print("Invalid placement: Overlapping letter mismatch.")
+            return False
     elif direction == 'down':
-        for letter in word:
-            if board[row][col] == ' ' or board[row][col] == letter:
-                board[row][col] = letter
-            else:
-                print("Invalid placement: Overlapping letter mismatch.")
-                return False
-            row += 1
+        if all(board[row + i][col] in [' ', word[i]] for i in range(len(word))):
+            for i, letter in enumerate(word):
+                board[row + i][col] = letter
+        else:
+            print("Invalid placement: Overlapping letter mismatch.")
+            return False
     return True
 
 # Main game loop
